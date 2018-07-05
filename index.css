@@ -1,0 +1,27 @@
+.ownContainer{
+    margin-left: 10%;
+    margin-right: 10%;
+}
+.vl {
+    border-left: 6px solid rgb(128, 15, 0);
+    height: 100%;
+    position: absolute;
+    left: 50%;
+    margin-left: -3px;
+    top: 0;
+}
+.inline-block-child {
+    display: inline-block;
+  }
+.btn {
+    align-items: center;
+}
+.leftankchild {
+    color: red;
+}
+.rightankchild{
+    color: green;
+}
+h3{
+    margin-bottom: 0px;
+}
