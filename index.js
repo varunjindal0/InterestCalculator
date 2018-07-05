@@ -7,15 +7,24 @@
         
         render(){
             let ankClass;
+            let cbid ;
+            let cdid ; 
             if(this.props.side==="left"){
                 ankClass = "left"+ this.props.className;
+                 cbid = "checkboxid" + "-" + this.props.entryIndex + "-" + this.props.ankObjIndex + "left";
+                 cdid = "cdinputboxid" + "-" + this.props.entryIndex + "-" + this.props.ankObjIndex + "left";
             } else {
                 ankClass = "right"+this.props.className;
+                 cbid = "checkboxid" + "-" + this.props.entryIndex + "-" + this.props.ankObjIndex + "right";
+                 cdid = "cdinputboxid" + "-" + this.props.entryIndex + "-" + this.props.ankObjIndex + "right";
             }
+            
+            console.log("---------------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+ cbid)
+            console.log("---------------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@------------"+ cdid)
             return (
                 <li className={ankClass} >
-                    {this.props.entry.amount}: {this.props.entry.days} <input id="checkboxid" type = "checkbox" onClick={(e)=>this.props.onCheckboxClick(this.props.entry, e)} defaultChecked></input>
-                    <input type="number"/>
+                    {this.props.entry.amount}: {this.props.entry.days} <input id={cbid} type = "checkbox" onClick={(e)=>this.props.onCheckboxClick(this.props.entryIndex, this.props.ankObjIndex, this.props.side , this.props.entry, e)} defaultChecked></input>
+                    <input id={cdid} type="number" onChange={(e)=>this.props.changeOfAnkDays(this.props.entryIndex, this.props.ankObjIndex, this.props.side , this.props.entry, e)} defaultValue={this.props.cdvalue}/>
                 </li>
                 
             )
@@ -36,7 +45,7 @@
                                 <ul>
                                     {
                                         this.props.entry.ankObj.map((element, index)=>{
-                                        return <AnkObj key={index} className="ankchild" side={this.props.side} entry={element} onCheckboxClick={this.props.onCheckboxClick}/>
+                                        return <AnkObj key={index} changeOfAnkDays={this.props.changeOfAnkDays} cdvalue={this.props.cdvalue} entryIndex={this.props.entryIndex} ankObjIndex={index} className="ankchild" side={this.props.side} entry={element} onCheckboxClick={this.props.onCheckboxClick}/>
                                         })
                                     }
                                 </ul>
@@ -117,7 +126,7 @@
                         <ol>
                         {
                             this.props.entries.map((entry, index)=>{
-                               return <Entry key={index} entry= {entry} side={this.props.side} onCheckboxClick={this.props.onCheckboxClick} />
+                               return <Entry key={index} changeOfAnkDays={this.props.changeOfAnkDays} cdvalue={this.props.cdvalue} entry= {entry} entryIndex={index} side={this.props.side} onCheckboxClick={this.props.onCheckboxClick} />
                             })
                             // <Entry entries = {this.props.entry}/>
                         }
@@ -415,14 +424,31 @@
                 this.setState({date: setdate, cashDiscountDays: cddays}, function(){
                 console.log("--------------EXITED setDateAndCD" + this.state.date + this.state.cashDiscountDays);
                 })
-            }
-            
-            
+            }            
         }
-        onCheckboxClick(entry, e){
-            console.log("checkbox clicked event triggered "+ e.target + document.getElementById("checkboxid").checked);
-            entry.flag = document.getElementById("checkboxid").checked;
-            console.log("------------------------------------"+ entry.flag+" otherthan state "+ document.getElementById("checkboxid").checked);
+        onCheckboxClick(entryIndex, ankObjIndex, side, entry, e){
+            console.log("------------------------------------ old value of entry.flag"+ entry.flag);
+            let id = "checkboxid" + "-" + entryIndex + "-" + ankObjIndex + side;
+            console.log("checkbox clicked event triggered: " + document.getElementById(id).checked);
+            entry.flag = document.getElementById(id).checked;
+            console.log("new value of entry.flag:  "+ entry.flag);
+            // let newState = [];
+            // if(side==="left"){
+                
+            // } else {
+
+            // }
+        }
+        changeOfAnkDays(entryIndex, ankObjIndex, side, entry, e){
+            console.log("------------------------------------ old value of entry.days"+ entry.days);
+            let id = "cdinputboxid" + "-" + entryIndex + "-" + ankObjIndex + side;
+            console.log(document.getElementById(id).value)
+            if(document.getElementById(id)){
+                console.log("inputbox change event triggered: " + document.getElementById(id).value);
+                entry.days = entry.days - document.getElementById(id).value;
+            }
+            console.log("new value of entry.days:  "+ entry.days);
+
         }
     render(){
     return (
@@ -448,15 +474,18 @@
             
             <Row>
                 <Col sm={6}>
-                <Oneside entries={this.state.entriesDebited} onsubmit={this.displayAndStore} onCheckboxClick={this.onCheckboxClick} side="left"/>
+                <Oneside entries={this.state.entriesDebited} changeOfAnkDays={this.changeOfAnkDays} cdvalue={this.state.cashDiscountDays} onsubmit={this.displayAndStore} onCheckboxClick={this.onCheckboxClick} side="left"/>
                 </Col>
                 <Col sm={6}>
-                <Oneside entries={this.state.entriesCredited} onsubmit={this.displayAndStore} onCheckboxClick={this.onCheckboxClick} side="right"/>
+                <Oneside entries={this.state.entriesCredited} changeOfAnkDays={this.changeOfAnkDays} cdvalue={this.state.cashDiscountDays} onsubmit={this.displayAndStore} onCheckboxClick={this.onCheckboxClick} side="right"/>
                 </Col>
             </Row>
-            <div className="vl"></div>
+            <div style={{marginBottom: "100px"}} className="vl"></div>
+            
+            <div style={{textAlign: "center"}}>
             <button className="btn" onClick={this.calculateInterest} style={{marginRight: "75px"}}>Ank Calculation!!</button>
-            <button className="btn" onClick={this.calculateInterestFinal}>Calculate Interest</button>
+            <button className="btn" onClick={this.calculateInterestFinal}>Calculate Interest!!</button>
+            </div>
         </Container>
         </Container>
           );
